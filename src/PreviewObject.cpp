@@ -10,7 +10,7 @@
 #include <jpeglib.h>
 #include "draw-overlay.h"
 
-PreviewObject::PreviewObject(const std::string &name, int sourceId, int exprCountId, bool overlay) : LogicalObject(name), sourceId(sourceId), qualityExprId(qualityExprId), overlay(overlay) {
+PreviewObject::PreviewObject(const std::string &name, int sourceId, int qualityExprId, bool overlay) : LogicalObject(name), sourceId(sourceId), qualityExprId(qualityExprId), overlay(overlay) {
     bitmap = NULL;
     srcBitmap = NULL;
     width = 0, height = 0;
@@ -22,12 +22,10 @@ PreviewObject::~PreviewObject() {
     free(srcBitmap);
 }
 
-PreviewObject * PreviewObject::reconfigure(int sourceId, int exprCountId, bool overlay) {
-    if (this) {
-        this->sourceId = sourceId;
-        this->qualityExprId = exprCountId;
-        this->overlay = overlay;
-    }
+PreviewObject * PreviewObject::reconfigure(int sourceId, int qualityExprId, bool overlay) {
+    this->sourceId = sourceId;
+    this->qualityExprId = qualityExprId;
+    this->overlay = overlay;
     return this;
 }
 

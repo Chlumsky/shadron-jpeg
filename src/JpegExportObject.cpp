@@ -9,6 +9,7 @@
 #include "fopen-utf8.h"
 
 JpegExportObject::JpegExportObject(int sourceId, const std::string &filename, int qualityExprId) : LogicalObject(std::string()), sourceId(sourceId), filename(filename), qualityExprId(qualityExprId) {
+    pixelBuffer = NULL;
     width = 0, height = 0;
     quality = 0;
 }
@@ -18,11 +19,9 @@ JpegExportObject::~JpegExportObject() {
 }
 
 JpegExportObject * JpegExportObject::reconfigure(int sourceId, const std::string &filename, int qualityExprId) {
-    if (this) {
-        this->sourceId = sourceId;
-        this->filename = filename;
-        this->qualityExprId = qualityExprId;
-    }
+    this->sourceId = sourceId;
+    this->filename = filename;
+    this->qualityExprId = qualityExprId;
     return this;
 }
 

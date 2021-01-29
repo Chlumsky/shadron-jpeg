@@ -6,11 +6,11 @@
 class PreviewObject : public LogicalObject {
 
 public:
-    PreviewObject(const std::string &name, int sourceId, int exprCountId, bool overlay);
+    PreviewObject(const std::string &name, int sourceId, int qualityExprId, bool overlay);
     PreviewObject(const PreviewObject &) = delete;
     virtual ~PreviewObject();
     PreviewObject & operator=(const PreviewObject &) = delete;
-    PreviewObject * reconfigure(int sourceId, int exprCountId, bool overlay);
+    PreviewObject * reconfigure(int sourceId, int qualityExprId, bool overlay);
     virtual bool prepare(int &width, int &height) override;
     virtual bool getSize(int &width, int &height) const override;
     virtual int setExpressionValue(int exprId, int type, const void *value) override;

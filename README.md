@@ -11,10 +11,17 @@ which adds the functionality to export JPEG files via
 
 ## Installation
 
-Place `shadron-jpeg.dll`
-in the `extensions` directory next to Shadron's executable, or better yet,
+### Windows
+
+Place `shadron-jpeg.dll` in the `extensions` directory next to Shadron's executable, or better yet,
 in `%APPDATA%\Shadron\extensions`. It will be automatically detected by Shadron on next launch.
 Requires Shadron 1.1.3 or later.
+
+### Mac
+
+Place `shadron-jpeg.dylib` into `~/.config/Shadron/extensions`.
+It will be automatically detected by Shadron on next launch.
+Requires Shadron 1.4.2 or later.
 
 ## Usage
 
