@@ -23,7 +23,9 @@ int LogicalObject::offerSource(void *&pixelBuffer, int sourceId, int width, int 
     return false;
 }
 
-void LogicalObject::setSourcePixels(int sourceId, const void *pixels, int width, int height) { }
+bool LogicalObject::setSourcePixels(int sourceId, const void *pixels, int width, int height) {
+    return false;
+}
 
 bool LogicalObject::pixelsReady() const {
     return false;

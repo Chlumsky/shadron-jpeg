@@ -35,19 +35,21 @@ int JpegExportObject::setExpressionValue(int exprId, int type, const void *value
 
 int JpegExportObject::offerSource(void *&pixelBuffer, int sourceId, int width, int height) {
     if (sourceId == this->sourceId) {
-        if (!(this->pixelBuffer = realloc(this->pixelBuffer, 4*width*height)))
-            return false;
-        pixelBuffer = this->pixelBuffer;
-        return true;
+        if (void *newPixelBuffer = realloc(this->pixelBuffer, 4*width*height)) {
+            pixelBuffer = this->pixelBuffer = newPixelBuffer;
+            return true;
+        }
     }
     return false;
 }
 
-void JpegExportObject::setSourcePixels(int sourceId, const void *pixels, int width, int height) {
+bool JpegExportObject::setSourcePixels(int sourceId, const void *pixels, int width, int height) {
     if (sourceId == this->sourceId) {
         this->width = width;
         this->height = height;
+        return true;
     }
+    return false;
 }
 
 std::string JpegExportObject::getExportFilename() const {

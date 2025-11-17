@@ -15,7 +15,7 @@ public:
     virtual bool getSize(int &width, int &height) const override;
     virtual int setExpressionValue(int exprId, int type, const void *value) override;
     virtual int offerSource(void *&pixelBuffer, int sourceId, int width, int height) override;
-    virtual void setSourcePixels(int sourceId, const void *pixels, int width, int height) override;
+    virtual bool setSourcePixels(int sourceId, const void *pixels, int width, int height) override;
     virtual bool pixelsReady() const override;
     virtual const void * fetchPixels(int width, int height) override;
 
@@ -29,6 +29,6 @@ private:
     int width, height;
     int quality;
 
-    void render();
+    bool render();
 
 };

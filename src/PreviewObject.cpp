@@ -44,8 +44,7 @@ int PreviewObject::setExpressionValue(int exprId, int type, const void *value) {
         int newQuality = (int) roundf(100.f*std::min(std::max(*reinterpret_cast<const float *>(value), 0.f), 1.f));
         if (newQuality != quality) {
             quality = newQuality;
-            render();
-            return true;
+            return render();
         }
     }
     return false;
@@ -54,11 +53,13 @@ int PreviewObject::setExpressionValue(int exprId, int type, const void *value) {
 int PreviewObject::offerSource(void *&pixelBuffer, int sourceId, int width, int height) {
     if (sourceId == this->sourceId) {
         if (!(width == this->width && height == this->height)) {
-            this->width = width;
-            this->height = height;
-            srcBitmap = realloc(srcBitmap, 4*width*height);
-            pixelBuffer = srcBitmap;
-            return OBJ_RESIZE;
+            if (void *newSrcBitmap = realloc(srcBitmap, 4*width*(height+1))) {
+                pixelBuffer = srcBitmap = newSrcBitmap;
+                this->width = width;
+                this->height = height;
+                return OBJ_RESIZE;
+            } else
+                return false;
         }
         pixelBuffer = srcBitmap;
         return true;
@@ -66,9 +67,10 @@ int PreviewObject::offerSource(void *&pixelBuffer, int sourceId, int width, int 
     return false;
 }
 
-void PreviewObject::setSourcePixels(int sourceId, const void *pixels, int width, int height) {
+bool PreviewObject::setSourcePixels(int sourceId, const void *pixels, int width, int height) {
     if (pixels == srcBitmap && width == this->width && height == this->height)
-        render();
+        return render();
+    return false;
 }
 
 bool PreviewObject::pixelsReady() const {
@@ -81,10 +83,13 @@ const void * PreviewObject::fetchPixels(int width, int height) {
     return bitmap;
 }
 
-void PreviewObject::render() {
+bool PreviewObject::render() {
     if (!(srcBitmap && width > 0 && height > 0))
-        return;
-    bitmap = realloc(bitmap, 4*width*height);
+        return false;
+    if (void *newBitmap = realloc(bitmap, 4*width*height))
+        bitmap = newBitmap;
+    else
+        return false;
     unsigned char *jpegData = NULL;
     unsigned long jpegDataLen = 0;
     {
@@ -100,8 +105,8 @@ void PreviewObject::render() {
         jpeg_set_defaults(&cinfo);
         jpeg_set_quality(&cinfo, quality, TRUE);
         jpeg_start_compress(&cinfo, TRUE);
-        unsigned char *row = reinterpret_cast<unsigned char *>(srcBitmap);
-        const unsigned char *src = row;
+        unsigned char *row = reinterpret_cast<unsigned char *>(srcBitmap)+4*width*height;
+        const unsigned char *src = reinterpret_cast<unsigned char *>(srcBitmap);
         while (cinfo.next_scanline < cinfo.image_height) {
             unsigned char *dst = row;
             for (int i = 0; i < width; ++i) {
@@ -121,9 +126,10 @@ void PreviewObject::render() {
         jpeg_mem_src(&cinfo, jpegData, jpegDataLen);
         if (jpeg_read_header(&cinfo, TRUE) != JPEG_HEADER_OK || !jpeg_start_decompress(&cinfo)) {
             jpeg_destroy_decompress(&cinfo);
+            free(jpegData);
             free(bitmap);
             bitmap = NULL;
-            return;
+            return false;
         }
         unsigned char *row = reinterpret_cast<unsigned char *>(bitmap);
         while (cinfo.output_scanline < cinfo.output_height) {
@@ -132,7 +138,7 @@ void PreviewObject::render() {
             unsigned char *dst = row += 4*width;
             for (int i = 0; i < width; ++i) {
                 dst -= 4, src -= 3;
-                dst[0] = src[0], dst[1] = src[1], dst[2] = src[2], dst[3] = (unsigned char) 0xffu;
+                dst[3] = (unsigned char) 0xffu, dst[2] = src[2], dst[1] = src[1], dst[0] = src[0];
             }
         }
         jpeg_finish_decompress(&cinfo);
@@ -145,4 +151,5 @@ void PreviewObject::render() {
         drawOverlay(bitmap, width, height, overlayStr, 10, 10, 1.f, .875f, 0.f);
     }
     free(jpegData);
+    return true;
 }

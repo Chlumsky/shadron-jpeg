@@ -285,7 +285,8 @@ int SHADRON_API_FN shadron_object_post_source_pixels(void *context, void *object
     LogicalObject *obj = reinterpret_cast<LogicalObject *>(object);
     if (format != SHADRON_FORMAT_RGBA_BYTE)
         return SHADRON_RESULT_UNEXPECTED_ERROR;
-    obj->setSourcePixels(sourceIndex, pixels, width, height);
+    if (!obj->setSourcePixels(sourceIndex, pixels, width, height))
+        return SHADRON_RESULT_UNEXPECTED_ERROR;
     return SHADRON_RESULT_OK;
 }
 

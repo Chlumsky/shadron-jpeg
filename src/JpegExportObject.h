@@ -14,7 +14,7 @@ public:
     JpegExportObject * reconfigure(int sourceId, const std::string &filename, int qualityExprId);
     virtual int setExpressionValue(int exprId, int type, const void *value) override;
     virtual int offerSource(void *&pixelBuffer, int sourceId, int width, int height) override;
-    virtual void setSourcePixels(int sourceId, const void *pixels, int width, int height) override;
+    virtual bool setSourcePixels(int sourceId, const void *pixels, int width, int height) override;
     virtual std::string getExportFilename() const override;
     virtual bool runExport() override;
     virtual void cleanup() override;

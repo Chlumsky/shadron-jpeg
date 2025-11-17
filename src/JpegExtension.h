@@ -7,7 +7,7 @@
 #include "LogicalObject.h"
 
 #define EXTENSION_NAME "jpeg"
-#define EXTENSION_VERSION 100
+#define EXTENSION_VERSION 110
 
 #define INITIALIZER_JPEG_EXPORT_ID 0
 #define INITIALIZER_JPEG_EXPORT_NAME "jpeg"
